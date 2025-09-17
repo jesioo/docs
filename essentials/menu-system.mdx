@@ -11,16 +11,6 @@ The dx menu system is the heart of your terminal workflow, allowing you to organ
 dx supports multiple configuration formats for maximum flexibility:
 
 <Tabs>
-  <Tab title="TOML">
-    ```toml
-    [[items]]
-    name = "Build Project"
-    description = "Compile and build the project"
-    cmd = "cargo build --release"
-    alias = "build"
-    ```
-  </Tab>
-  
   <Tab title="YAML">
     ```yaml
     items:
@@ -28,6 +18,16 @@ dx supports multiple configuration formats for maximum flexibility:
         description: Compile and build the project
         cmd: cargo build --release
         alias: build
+    ```
+  </Tab>
+  
+  <Tab title="TOML">
+    ```toml
+    [[items]]
+    name = "Build Project"
+    description = "Compile and build the project"
+    cmd = "cargo build --release"
+    alias = "build"
     ```
   </Tab>
   
@@ -84,7 +84,21 @@ dx aliases      # List all available aliases
 ### Nested Menu Structure
 Create organized hierarchies with unlimited depth:
 
-```toml
+<CodeGroup>
+```yaml dx.yaml
+items:
+  - name: "Development Tools"
+    description: "Build, test, and deploy commands"
+    children:
+      - name: "Build Release"
+        cmd: "cargo build --release"
+        alias: "build"
+      - name: "Run Tests"
+        cmd: "cargo test"
+        alias: "test"
+```
+
+```toml dx.toml
 [[items]]
 name = "Development Tools"
 description = "Build, test, and deploy commands"
@@ -100,16 +114,59 @@ cmd = "cargo test"
 alias = "test"
 ```
 
+```json dx.json
+{
+  "items": [
+    {
+      "name": "Development Tools",
+      "description": "Build, test, and deploy commands",
+      "children": [
+        {
+          "name": "Build Release",
+          "cmd": "cargo build --release",
+          "alias": "build"
+        },
+        {
+          "name": "Run Tests",
+          "cmd": "cargo test",
+          "alias": "test"
+        }
+      ]
+    }
+  ]
+}
+```
+</CodeGroup>
+
 ### Interactive Forms
 Build dynamic forms that collect input and execute commands:
 
-```toml
+<CodeGroup>
+```yaml dx.yaml
+items:
+  - name: "Deploy Application"
+    description: "Deploy to specified environment"
+    form:
+      title: "Application Deployment"
+      fields:
+        - name: "environment"
+          label: "Target Environment"
+          type: "select"
+          options: ["staging", "production"]
+        - name: "version"
+          label: "Version Tag"
+          placeholder: "v1.0.0"
+      submit: "deploy.sh {environment} {version}"
+```
+
+```toml dx.toml
 [[items]]
 name = "Deploy Application"
 description = "Deploy to specified environment"
 
 [items.form]
 title = "Application Deployment"
+submit = "deploy.sh {environment} {version}"
 
 [[items.form.fields]]
 name = "environment"
@@ -121,10 +178,36 @@ options = ["staging", "production"]
 name = "version" 
 label = "Version Tag"
 placeholder = "v1.0.0"
-
-[items.form]
-submit = "deploy.sh {environment} {version}"
 ```
+
+```json dx.json
+{
+  "items": [
+    {
+      "name": "Deploy Application",
+      "description": "Deploy to specified environment",
+      "form": {
+        "title": "Application Deployment",
+        "fields": [
+          {
+            "name": "environment",
+            "label": "Target Environment",
+            "type": "select",
+            "options": ["staging", "production"]
+          },
+          {
+            "name": "version",
+            "label": "Version Tag",
+            "placeholder": "v1.0.0"
+          }
+        ],
+        "submit": "deploy.sh {environment} {version}"
+      }
+    }
+  ]
+}
+```
+</CodeGroup>
 
 <Note>
   Menu configurations support environment variable expansion and can reference relative file paths for maximum flexibility.

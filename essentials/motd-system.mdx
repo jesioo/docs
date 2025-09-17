@@ -1,0 +1,34 @@
+---
+title: 'MOTD System'
+description: 'Visual context and branding displayed above the interface for better project communication'
+icon: 'bell'
+---
+
+The MOTD (Message of the Day) system provides visual context and branding that appears above the dx interface, helping teams communicate status, instructions, and branding.
+
+## Message of the Day
+
+dx displays a customizable MOTD at the top of the interface, providing immediate context for anyone entering your project:
+
+```markdown
+# Welcome to Project X
+```
+
+## Markdown support
+
+DX renders markdown in the MOTD, but sometimes complex ASCII art may not display perfectly.  
+
+If your ASCII art looks broken, you can add `<!-- dx:ascii -->` at the top of your MOTD to disable markdown rendering and show the ASCII art exactly as written.
+
+### ASCII Art Support
+Create eye-catching project branding with ASCII art:
+
+```text
+<!-- dx:ascii -->
+▗▄▄▄ ▗▖  ▗▖
+▐▌  █ ▝▚▞▘ 
+▐▌  █  ▐▌  
+▐▙▄▄▀▗▞▘▝▚▖
+
+Welcome to DX Project
+```

@@ -1,0 +1,274 @@
+---
+title: 'Command Generation'
+description: 'Generate dx.yaml configurations from natural language prompts using AI'
+icon: 'wand-magic-sparkles'
+---
+
+Transform natural language descriptions into complete dx configurations using AI. Just describe your workflow, and dx generates the perfect `dx.yaml` file.
+
+## How it works
+
+<CardGroup cols={2}>
+  <Card title="Natural Language Input" icon="message">
+    Describe your workflow in plain English to AI
+  </Card>
+  <Card title="Intelligent Generation" icon="brain">
+    AI understands context and generates appropriate commands
+  </Card>
+  <Card title="Smart Validation" icon="shield-check">
+    Generated configs are validated and safe to use
+  </Card>
+  <Card title="Instant Workflow" icon="rocket">
+    Ready-to-use dx.yaml with proper aliases and structure
+  </Card>
+</CardGroup>
+
+## Basic Usage
+
+```bash
+# Generate dx config from natural language
+dx ai generate --prompt "I need commands to build Rust project, run tests, and deploy to staging"
+```
+
+**Generated dx.yaml:**
+```yaml
+items:
+  - name: "Build Project"
+    alias: "build"
+    description: "Build Rust project in release mode"
+    cmd: "cargo build --release"
+    
+  - name: "Run Tests"
+    alias: "test"  
+    description: "Execute all test suites"
+    cmd: "cargo test"
+    
+  - name: "Deploy to Staging"
+    alias: "deploy"
+    description: "Deploy application to staging environment" 
+    cmd: "kubectl apply -f k8s/staging/"
+```
+
+## Advanced Prompts
+
+### Project Analysis
+```bash
+# AI analyzes your project and suggests workflow
+dx ai analyze
+```
+
+**AI examines:**
+- Package files (`package.json`, `Cargo.toml`, `pom.xml`)
+- Existing scripts (`scripts/`, `Makefile`, `.github/workflows/`)
+- Documentation (`README.md`, `CONTRIBUTING.md`)
+- Project structure and conventions
+
+### Context-Aware Generation
+```bash
+# Provide specific context for better results
+dx ai generate --prompt "
+Node.js project with TypeScript
+Uses Jest for testing  
+Deploys to Vercel
+Has linting with ESLint
+Needs database migrations
+"
+```
+
+**Generated output:**
+```yaml
+items:
+  - name: "Development"
+    description: "Development workflow commands"
+    
+    children:
+      - name: "Install Dependencies"
+        alias: "install"
+        cmd: "npm install"
+        
+      - name: "Start Development Server"
+        alias: "dev"
+        cmd: "npm run dev"
+        external: true
+        
+      - name: "Build Production"
+        alias: "build"  
+        cmd: "npm run build"
+        
+  - name: "Quality Assurance"
+    description: "Testing and code quality"
+    
+    children:
+      - name: "Run Tests"
+        alias: "test"
+        cmd: "npm run test"
+        
+      - name: "Lint Code"  
+        alias: "lint"
+        cmd: "npm run lint"
+        
+      - name: "Type Check"
+        alias: "typecheck"
+        cmd: "npm run type-check"
+        
+  - name: "Database"
+    description: "Database operations"
+    
+    children:
+      - name: "Run Migrations"
+        alias: "migrate"
+        cmd: "npm run migrate"
+        
+      - name: "Seed Database"
+        alias: "seed"
+        cmd: "npm run seed"
+        
+  - name: "Deployment"
+    description: "Deploy to Vercel"
+    alias: "deploy"
+    cmd: "vercel --prod"
+    external: true
+```
+
+## Provider Configuration
+
+### OpenAI Integration
+```toml
+# config.toml
+[ai]
+provider = "openai"
+api_key = "${OPENAI_API_KEY}"
+model = "gpt-4"
+```
+
+### Anthropic Integration  
+```toml
+[ai]
+provider = "anthropic"
+api_key = "${ANTHROPIC_API_KEY}"
+model = "claude-3-sonnet-20240229"
+```
+
+### Local Model Support
+```toml
+[ai]
+provider = "local"
+endpoint = "http://localhost:11434"  # Ollama
+model = "codellama:7b"
+```
+
+## Command Examples
+
+### Interactive Generation
+```bash
+# Interactive prompt builder
+dx ai generate --interactive
+
+# AI asks clarifying questions:
+# "What type of project is this?"
+# "What deployment platform do you use?"
+# "Do you need database commands?"
+# "What testing framework?"
+```
+
+### Template-Based Generation
+```bash
+# Use pre-built templates with customization
+dx ai template web-app --framework react --database postgres
+
+# Templates available:
+# web-app, api-service, cli-tool, library, mobile-app
+```
+
+### Incremental Updates
+```bash
+# Add new commands to existing config
+dx ai extend --prompt "Add Docker commands for containerized deployment"
+
+# AI intelligently merges with existing dx.yaml
+```
+
+## AI Prompt Patterns
+
+### Effective Prompts
+```bash
+# ✅ Good - Specific with context
+dx ai generate --prompt "
+Python FastAPI service
+PostgreSQL database with Alembic migrations  
+Docker deployment to AWS ECS
+Uses pytest for testing
+GitHub Actions for CI/CD
+"
+
+# ✅ Good - Workflow focused  
+dx ai generate --prompt "
+I need commands for:
+- Building and testing React app
+- Running Storybook for components
+- Deploying to Netlify  
+- Managing environment configs
+"
+```
+
+### Best Practices
+- **Be specific** about your tech stack
+- **Include deployment details** (platform, environment)
+- **Mention testing approach** (framework, types)
+- **Describe team workflow** (CI/CD, code review)
+- **Add context** about project structure
+
+## Security & Safety
+
+### Safe Generation
+- **Command validation** - AI-generated commands are validated before use
+- **No secrets** - API keys and sensitive data excluded from generation
+- **Human review** - Generated configs require confirmation before saving
+- **Backup creation** - Existing configs are backed up before replacement
+
+### Privacy Protection
+```bash
+# Local generation (no data sent to external AI)
+dx ai generate --local --prompt "Add build commands for Rust project"
+
+# Prompt sanitization (removes sensitive info)  
+dx ai generate --sanitize --prompt "Add deploy to prod with secret key abc123"
+# AI receives: "Add deploy to prod with [REDACTED]"
+```
+
+## Integration Examples
+
+### CI/CD Pipeline Generation
+```bash
+dx ai generate --prompt "
+Generate CI/CD workflow:
+- Run on every PR to main
+- Build, test, security scan  
+- Deploy to staging on merge
+- Manual production deployment
+"
+```
+
+### Team Onboarding
+```bash
+# Generate onboarding menu for new developers
+dx ai template onboarding --team-size large --project backend-api
+```
+
+### Legacy Project Migration
+```bash
+# Convert existing scripts to dx format
+dx ai migrate --scripts ./scripts/ --include-makefiles
+```
+
+<Tip>
+  Start with simple prompts and let AI ask clarifying questions for better results.
+</Tip>
+
+<Warning>
+  Always review AI-generated commands before executing them, especially those involving deployment or system changes.
+</Warning>
+
+<Note>
+  Command generation works best when combined with your existing dx.yaml - AI can understand and extend your current workflow patterns.
+</Note>

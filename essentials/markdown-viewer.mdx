@@ -1,6 +1,6 @@
 ---
 title: 'Markdown Viewer'  
-description: 'Rich Markdown rendering with clickable footnotes, MOTD system, and interactive navigation'
+description: 'Rich Markdown rendering with clickable footnotes and interactive navigation'
 icon: 'markdown'
 ---
 
@@ -69,35 +69,6 @@ Links to local `.md` files become navigable:
 - Seamless navigation between documents
 - Back navigation with `b` or `Backspace`
 
-## MOTD System
-
-### Message of the Day
-dx displays a customizable MOTD (Message of the Day) at the top of the interface:
-
-```markdown
-<!-- MOTD.md -->
-# Welcome to Project X
-
-> Status: Development in progress
-
-## Quick Commands
-- Build: `dx build`  
-- Test: `dx test`
-- Deploy: `dx deploy`
-```
-
-### ASCII Art Support
-Force ASCII art rendering without Markdown processing:
-
-```markdown
-<!-- dx:ascii -->
-██████╗ ██╗  ██╗
-██╔══██╗╚██╗██╔╝
-██║  ██║ ╚███╔╝ 
-██║  ██║ ██╔██╗ 
-██████╔╝██╔╝ ██╗
-╚═════╝ ╚═╝  ╚═╝
-```
 
 ## Display Controls
 
@@ -142,20 +113,6 @@ dx automatically renders Markdown for files with extensions:
 - `.txt` files with Markdown content
 - README files in any format
 
-### MOTD Integration  
-The MOTD system integrates seamlessly with your project:
-
-```toml
-# menu.toml
-[[items]]
-name = "Documentation"  
-description = "Project documentation"
-file = "docs/README.md"
-```
-
-<Tip>
-  Combine MOTD with menu aliases to create self-documenting project interfaces that guide new team members through common workflows.
-</Tip>
 
 <Note>
   Markdown rendering respects your terminal's color scheme and adapts to both light and dark themes automatically.

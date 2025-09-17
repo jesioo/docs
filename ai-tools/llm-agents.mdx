@@ -1,30 +1,79 @@
 ---
-title: 'LLM Agent Integration'
+title: 'Context / Costs optimization'
 description: 'Using dx --llm flag for seamless AI agent automation and non-interactive workflows'
 icon: 'brain'
 ---
 
-The `--llm` flag makes dx perfect for AI agents by providing concise, non-interactive usage instructions designed specifically for large language models and automated systems.
+The `--llm` flag tries to contribute to solve **context optimization** problem for AI agents. Instead of manually writing hundreds of lines describing available tools, agents just run `dx --llm` and automatically discover what they can do in any project.
 
-## The --llm Flag
+## Context Optimization Problem
 
-When AI agents need to understand dx capabilities, they can query the `--llm` flag:
+**Before dx --llm**: Manual context files that get outdated
+```markdown
+<!-- agents.md - manually maintained -->
+Available tools in this project:
+- Build: cargo build --release
+- Test: cargo test
+- Deploy: kubectl apply -f k8s/
+- Lint: cargo clippy
+- Format: cargo fmt
+<!-- Gets outdated when commands change -->
+```
 
+**With dx --llm**: Dynamic, always-current context
 ```bash
-dx --llm
-```
-
-**Output:**
-```
+# Agent runs this at start of every task
+$ dx --llm
 Use dx non-interactively. No TUI.
 - dx aliases  # list alias table
-- dx <alias>  # run leaf cmd; inherits stdio; returns exit code
-- dx <alias> --record  # record run to .cast (respects config)
-- dx <path>   # print file contents to stdout
-Rules: do not expect prompts; avoid TUI; pass exact args; check exit codes.
+- dx <alias>  # run leaf cmd; returns exit code
+Rules: do not expect prompts; check exit codes.
+
+# Then discovers actual available commands
+$ dx aliases
+ALIAS    NAME           TYPE  DETAILS
+build    Build Release  cmd   cargo build --release
+test     Run Tests      cmd   cargo test --all
+deploy   Deploy K8s     cmd   kubectl apply -f k8s/
+lint     Code Quality   cmd   cargo clippy -- -D warnings
 ```
 
-This concise output tells AI agents exactly how to use dx without human interaction.
+**Result**: Agent always knows current project capabilities without manual context management.
+
+## Context & Cost Optimization
+
+### The dx --llm
+Dynamic context discovery in minimal tokens:
+
+
+
+```bash
+# Agent workflow (4 commands, ~50 tokens total)
+1. dx --llm                     # Get usage instructions
+2. dx aliases                   # Discover commands
+```
+# Agent starts each task with 2 commands:
+
+**After dx --llm:**
+```bash
+$ dx --llm && dx aliases
+# Gets current, accurate list of ALL available commands
+```
+
+### Auto-Updated Context
+```bash
+# When project evolves, dx context updates automatically:
+
+# Developer adds new command to dx.yaml:
+- name: "Deploy with Rollback"
+  alias: "deploy-safe"
+  cmd: "kubectl apply -f k8s/ && kubectl rollout status"
+
+# Next time agent runs:
+$ dx aliases
+# Automatically includes new deploy-safe command
+# No manual context file updates needed!
+```
 
 ## Agent-Friendly Design
 
@@ -43,252 +92,53 @@ This concise output tells AI agents exactly how to use dx without human interact
   </Card>
 </CardGroup>
 
-## AI Agent Usage Patterns
+## AI Safety & Verification
 
-### Command Execution
+### Command Safety Check
 ```bash
-# AI agent discovers available commands
-dx aliases
-
-# AI agent executes specific commands
-dx build                 # Returns exit code 0 on success
-dx test                  # Returns non-zero on test failure
-dx deploy                # Inherits full stdio for interactive prompts
+# Verify if command/script is safe for AI execution
+dx ai verify ./deploy.sh
+dx ai verify "rm -rf /"           # Obviously unsafe
+dx ai verify "cargo build"        # Generally safe
 ```
 
-### File Operations
+**AI analyzes:**
+- **Destructive patterns** - `rm -rf`, `dd`, `format`, etc.
+- **Network operations** - External API calls, data uploads
+- **File system risks** - Writing to system directories
+- **Permission escalation** - `sudo`, `su`, privilege requests
+- **Resource consumption** - Infinite loops, fork bombs
+
+**Output examples:**
 ```bash
-# AI agent reads project files
-dx README.md            # Outputs file contents to stdout
-dx docs/api.md          # Works with any file path
-dx config.toml          # Read configuration files
+$ dx ai verify "cargo build --release"
+✅ SAFE: Standard build command, no destructive operations
+
+$ dx ai verify "./deploy.sh"  
+⚠️  REVIEW NEEDED: Deploys to production, requires manual confirmation
+
+$ dx ai verify "curl -X POST api.com/delete-all"
+❌ UNSAFE: Destructive API operation detected
 ```
 
-### Recording & Analysis
-```bash
-# AI agent records operations for later analysis
-dx build --record       # Creates timestamped .cast file
-dx test --record        # Records test execution  
-dx deploy --record      # Records deployment process
-```
-
-## Integration Examples
-
-### GitHub Actions with AI
-```yaml
-name: AI-Driven Development
-on: [push]
-
-jobs:
-  ai-workflow:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup dx
-        run: curl -fsSL https://usedx.sh | sh -s -- -y
-        
-      - name: AI Discovery Phase
-        run: |
-          echo "Available commands:"
-          dx aliases
-          
-      - name: AI Build Phase  
-        run: |
-          if dx build; then
-            echo "✅ Build successful"
-          else
-            echo "❌ Build failed with exit code $?"
-            exit 1
-          fi
-          
-      - name: AI Test Phase
-        run: |
-          dx test --record
-          if [ $? -eq 0 ]; then
-            echo "✅ All tests passed"
-          else
-            echo "❌ Tests failed - recording available for analysis"
-            exit 1
-          fi
-```
-
-### Claude/ChatGPT System Prompts
-
-```markdown
-## System Prompt for Development Assistant
-
-This project uses dx for development workflow automation. When helping with development tasks:
-
-1. **Discovery**: Use `dx --llm` to understand available commands
-2. **List Commands**: Use `dx aliases` to see available operations  
-3. **Execute Commands**: Use `dx <alias>` for specific tasks
-4. **Check Results**: Always check exit codes ($?) after commands
-5. **Read Files**: Use `dx <filepath>` to read project files
-
-Key Commands:
-- `dx build` - Build the project
-- `dx test` - Run test suite
-- `dx deploy` - Deploy application
-- `dx format` - Format code
-- `dx lint` - Run linting
-
-Rules:
-- Never expect interactive prompts
-- Always check exit codes
-- Use --record for debugging complex operations
-- Read project files with dx instead of cat
-```
-
-### Local AI Assistant Integration
-
-```bash
-#!/bin/bash
-# AI assistant helper script
-
-# Function to help AI discover dx capabilities
-ai_dx_help() {
-    echo "=== DX Integration Guide ==="
-    dx --llm
-    echo
-    echo "=== Available Commands ==="
-    dx aliases
-}
-
-# Function for AI to execute dx commands safely  
-ai_dx_exec() {
-    local cmd=$1
-    echo "🤖 AI executing: dx $cmd"
-    
-    if dx "$cmd"; then
-        echo "✅ Command succeeded (exit code: $?)"
-        return 0
-    else
-        local exit_code=$?
-        echo "❌ Command failed (exit code: $exit_code)"
-        return $exit_code
-    fi
-}
-
-# Function for AI to read project files
-ai_dx_read() {
-    local filepath=$1
-    echo "🤖 AI reading: $filepath"
-    dx "$filepath"
-}
-```
-
-## Advanced AI Integration Features
-
-### Environment Detection
-AI agents can detect dx availability:
-
-```bash
-# Check if dx is available
-if command -v dx >/dev/null 2>&1; then
-    echo "dx available - using structured workflow"
-    dx aliases
-else
-    echo "dx not found - falling back to direct commands"
-fi
-```
-
-### Project Type Detection
-```bash
-# AI can detect project structure through dx
-if dx aliases | grep -q "cargo"; then
-    echo "Rust project detected"
-elif dx aliases | grep -q "npm"; then
-    echo "Node.js project detected"  
-elif dx aliases | grep -q "docker"; then
-    echo "Containerized project detected"
-fi
-```
-
-### Workflow Recording for ML Training
-```bash
-# AI can record entire workflows for training data
-dx build --record
-dx test --record  
-dx deploy --record
-
-# Later: AI can analyze recordings to learn patterns
-ls *.cast | xargs -I {} asciinema play {}
-```
-
-## Error Handling for AI Agents
-
-### Proper Exit Code Handling
-```bash
-# AI should always check exit codes
-dx build
-BUILD_RESULT=$?
-
-if [ $BUILD_RESULT -eq 0 ]; then
-    echo "Build successful, proceeding to tests"
-    dx test
-else
-    echo "Build failed with code $BUILD_RESULT"
-    echo "Reading build logs for analysis:"
-    dx logs/build.log 2>/dev/null || echo "No build logs found"
-fi
-```
-
-### Graceful Fallbacks
-```bash
-# AI should have fallback strategies
-dx deploy 2>/dev/null || {
-    echo "dx deploy failed, trying manual deployment"
-    if [ -f deploy.sh ]; then
-        ./deploy.sh
-    else
-        echo "No deployment method found"
-        exit 1
-    fi
-}
-```
-
-## Best Practices for AI Integration
-
-### 1. Always Use --llm for Documentation
-```bash
-# ✅ AI should start with this
-dx --llm
-
-# ✅ Then discover available commands  
-dx aliases
-```
-
-### 2. Check Exit Codes
-```bash
-# ✅ Always check success/failure
-dx build && echo "Success" || echo "Failed"
-
-# ❌ Don't ignore exit codes
-dx build  # AI should check $? after this
-```
-
-### 3. Use Recording for Complex Operations
-```bash
-# ✅ Record complex workflows
-dx deploy --record
-
-# ✅ Record failing operations for debugging  
-dx test --record || echo "Test recording saved for analysis"
-```
-
-### 4. Handle Missing Commands Gracefully
-```bash
-# ✅ Check if commands exist
-if dx aliases | grep -q "deploy"; then
-    dx deploy
-else
-    echo "Deploy command not configured"
-fi
+### Safety Configuration
+```toml
+# config.toml
+[ai.safety]
+auto_verify = true              # Check all commands before execution
+block_unsafe = true             # Block obviously dangerous commands  
+require_confirmation = ["deploy", "delete", "rm"]  # Always confirm these
+whitelist_patterns = ["cargo", "npm", "git"]       # Always allow these
 ```
 
 <Warning>
-  The --llm flag is designed for automated systems. Always use it when setting up AI agents to ensure they understand dx's non-interactive capabilities.
+  **AI safety is improving rapidly but not perfect.** Always review AI recommendations, especially for:
+  - Production deployments
+  - Data deletion operations  
+  - System configuration changes
+  - External API calls with side effects
+  
+  Use AI verification as a **first line of defense**, not the only one.
 </Warning>
 
 <Tip>

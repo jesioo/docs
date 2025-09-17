@@ -18,7 +18,6 @@
             "pages": [
               "index",
               "quickstart",
-              "development",
               "manifesto",
               "principles"
             ]
@@ -37,6 +36,7 @@
               "essentials/menu-system",
               "essentials/command-execution",
               "essentials/markdown-viewer",
+              "essentials/motd-system",
               "essentials/recording",
               "essentials/security"
             ]
@@ -45,7 +45,8 @@
             "group": "AI Native",
             "pages": [
               "ai-tools/aliases",
-              "ai-tools/llm-agents"
+              "ai-tools/llm-agents",
+              "ai-tools/command-generation"
             ]
           }
         ]
