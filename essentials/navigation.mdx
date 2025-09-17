@@ -1,87 +1,108 @@
 ---
 title: 'Navigation'
-description: 'The navigation field in docs.json defines the pages that go in the navigation menu'
-icon: 'map'
+description: 'Quick reference for navigating and controlling dx interface'
+icon: 'keyboard'
 ---
 
-The navigation menu is the list of links on every website.
+Learn the essential keyboard shortcuts and navigation patterns for dx terminal interface.
 
-You will likely update `docs.json` every time you add a new page. Pages do not show up automatically.
+## Menu Navigation
 
-## Navigation syntax
+Navigate through menu items and execute commands:
 
-Our navigation syntax is recursive which means you can make nested navigation groups. You don't need to include `.mdx` in page names.
+<ResponseField name="Movement" type="keys">
+  **Up/Down** or **j/k** - Move selection up/down  
+  **Enter** - Execute selected item  
+  **Left** or **Backspace** - Go back to parent menu  
+  **Mouse wheel** - Scroll through menu items
+</ResponseField>
 
-<CodeGroup>
+<ResponseField name="Quick Actions" type="keys">
+  **q** or **Esc** - Exit dx (from root menu)  
+  **Ctrl+C** or **Ctrl+Q** - Immediate exit  
+  **:q Enter** - Vim-style quit
+</ResponseField>
 
-```json Regular Navigation
-"navigation": {
-  "tabs": [
-    {
-      "tab": "Docs",
-      "groups": [
-        {
-          "group": "Getting Started",
-          "pages": ["quickstart"]
-        }
-      ]
-    }
-  ]
-}
+## Output View Controls
+
+Control command output and file viewing:
+
+<ResponseField name="Scrolling" type="keys">
+  **j/k** or **Up/Down** - Scroll line by line  
+  **Page Up/Page Down** - Scroll by page  
+  **g/G** - Go to top/bottom  
+  **Mouse wheel** - Scroll content
+</ResponseField>
+
+<ResponseField name="View Options" type="keys">
+  **a** - Toggle auto-scroll to bottom  
+  **d** - Toggle dim/bright baseline text  
+  **m** - Toggle Markdown rendering  
+  **w** - Toggle text wrapping  
+  **s** - Toggle selection mode (release mouse to terminal)
+</ResponseField>
+
+<ResponseField name="Process Control" type="keys">
+  **Ctrl+C** - Kill running process (with confirmation)  
+  **b** or **Backspace** - Return to menu  
+  **q** or **Esc** - Return to menu or exit
+</ResponseField>
+
+## File Navigation
+
+When viewing Markdown files with footnotes:
+
+<ResponseField name="Link Navigation" type="keys">
+  **1-9** - Navigate to footnote links  
+  **Mouse click** - Click on footnote links  
+  **Enter** - Follow link to referenced file
+</ResponseField>
+
+## Global Controls
+
+Available throughout dx interface:
+
+<ResponseField name="System" type="keys">
+  **O** or **F10** - Toggle CPU overlay  
+  **Ctrl+R** - Refresh/reload current screen
+</ResponseField>
+
+## Quick Start
+
+1. **Launch dx**: Run `dx` in any directory
+2. **Navigate menu**: Use `j/k` or arrow keys to select items  
+3. **Execute command**: Press `Enter` on selected item
+4. **View output**: Watch command execution in real-time
+5. **Return to menu**: Press `Esc` or `q` when done
+6. **Exit dx**: Press `q` from main menu
+
+## Pro Tips
+
+<Tip>
+  **Mouse support**: dx supports mouse scrolling and clicking throughout the interface.
+</Tip>
+
+<Tip>
+  **Vim-style**: Most navigation follows Vim conventions - `j/k` for movement, `:q` to quit.
+</Tip>
+
+<Tip>
+  **Process safety**: dx always confirms before killing running processes with `Ctrl+C`.
+</Tip>
+
+<Tip>
+  **Auto-scroll**: Output automatically scrolls to follow new content unless you manually scroll up.
+</Tip>
+
+## Command Line Usage
+
+Beyond the TUI, dx supports direct command execution:
+
+```bash
+dx                    # Open TUI interface
+dx <alias>            # Run aliased command directly  
+dx <file>             # View file content
+dx aliases            # List all available aliases
+dx --record <alias>   # Record command execution
+dx --live             # Start live streaming session
 ```
-
-```json Nested Navigation
-"navigation": {
-  "tabs": [
-    {
-      "tab": "Docs",
-      "groups": [
-        {
-          "group": "Getting Started",
-          "pages": [
-            "quickstart",
-            {
-              "group": "Nested Reference Pages",
-              "pages": ["nested-reference-page"]
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-</CodeGroup>
-
-## Folders
-
-Simply put your MDX files in folders and update the paths in `docs.json`.
-
-For example, to have a page at `https://yoursite.com/your-folder/your-page` you would make a folder called `your-folder` containing an MDX file called `your-page.mdx`.
-
-<Warning>
-
-You cannot use `api` for the name of a folder unless you nest it inside another folder. Mintlify uses Next.js which reserves the top-level `api` folder for internal server calls. A folder name such as `api-reference` would be accepted.
-
-</Warning>
-
-```json Navigation With Folder
-"navigation": {
-  "tabs": [
-    {
-      "tab": "Docs",
-      "groups": [
-        {
-          "group": "Group Name",
-          "pages": ["your-folder/your-page"]
-        }
-      ]
-    }
-  ]
-}
-```
-
-## Hidden pages
-
-MDX files not included in `docs.json` will not show up in the sidebar but are accessible through the search bar and by linking directly to them.

@@ -1,0 +1,121 @@
+---
+title: 'Command Execution'
+description: 'Advanced command execution with PTY support, process control, and real-time output'
+icon: 'play'
+---
+
+dx provides sophisticated command execution capabilities with full terminal emulation, interactive input, and safe process management.
+
+## Execution Modes
+
+<CardGroup cols={2}>
+  <Card title="Internal Mode" icon="window">
+    Commands run inside dx TUI with full output capture and control
+  </Card>
+  <Card title="External Mode" icon="external-link">
+    Commands run in your shell, then return to dx interface
+  </Card>
+</CardGroup>
+
+### Internal Mode (Default)
+```toml
+[[items]]
+name = "Build Project"
+cmd = "cargo build --release"
+external = false  # Default behavior
+```
+
+- Full PTY integration for terminal apps
+- Real-time ANSI color output  
+- Interactive stdin support
+- Process control with confirmations
+
+### External Mode  
+```toml
+[[items]]
+name = "Open Editor"
+cmd = "code ."
+external = true   # Drops to shell temporarily
+```
+
+- Runs in your native shell environment
+- Full TTY access for complex applications
+- Automatic return to dx interface
+- Pause prompt for short-running commands
+
+## Real-Time Output Features
+
+### Visual Indicators
+- **Animated spinners** during command execution
+- **Live timers** showing execution duration  
+- **Process status** with colored exit codes
+- **Progress feedback** for long-running tasks
+
+### ANSI Support
+dx preserves full ANSI color sequences and terminal formatting:
+
+```bash
+# Colors, bold, italic, underline all preserved
+echo -e "\033[31mError:\033[0m \033[1mBold text\033[0m"
+```
+
+## Interactive Input
+
+<ResponseField name="Standard Input" type="feature">
+  Full stdin support for interactive commands like prompts, passwords, and user input
+</ResponseField>
+
+<ResponseField name="Terminal Emulation" type="feature">
+  PTY integration automatically detects and handles TUI applications 
+</ResponseField>
+
+<ResponseField name="Signal Handling" type="feature">
+  Proper forwarding of Ctrl+C, Ctrl+Z, and other terminal signals
+</ResponseField>
+
+## Process Control & Safety
+
+### Safe Kill Confirmation
+When you press `Ctrl+C` during command execution:
+
+1. dx shows a confirmation modal
+2. Press `Enter` to kill the process
+3. Press `Esc` to cancel and continue
+
+### Exit Status Handling
+Commands complete with clear status indicators:
+
+- 🟢 **Success** - Exit code 0 with green indicator
+- 🔴 **Error** - Non-zero exit with red indicator  
+- 🟡 **Terminated** - Process killed with yellow indicator
+
+## Advanced Features
+
+### Environment Variables
+Commands inherit your shell environment plus dx-specific variables:
+
+```bash
+# Available in all commands
+echo "Menu: $DX_MENU_NAME"
+echo "Item: $DX_ITEM_NAME"  
+```
+
+### Working Directory
+Commands execute in the directory where dx was launched, with full access to:
+- Project files and directories
+- Git repository context
+- Local configurations
+
+### Output Capture
+All command output is captured and can be:
+- Scrolled through with full history
+- Searched and filtered
+- Exported or shared via recordings
+
+<Tip>
+  Use `external = true` for commands that need full shell features like job control, complex piping, or shell-specific syntax.
+</Tip>
+
+<Warning>
+  Interactive password prompts work best with `external = false` mode for security and proper terminal handling.
+</Warning>

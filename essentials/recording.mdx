@@ -1,0 +1,203 @@
+---
+title: 'Recording & Streaming'
+description: 'Built-in asciinema integration for session recording and live streaming'  
+icon: 'video'
+---
+
+dx includes powerful built-in recording capabilities through asciinema integration, enabling you to capture terminal sessions and stream them live.
+
+## Recording Features
+
+<CardGroup cols={2}>
+  <Card title="Session Recording" icon="record-vinyl">
+    Capture complete terminal sessions with timing and colors
+  </Card>
+  <Card title="Live Streaming" icon="broadcast-tower">  
+    Stream your terminal sessions in real-time
+  </Card>
+  <Card title="Auto-Generated Names" icon="file-signature">
+    Automatic filenames with timestamps and prefixes
+  </Card>
+  <Card title="Status Badges" icon="badge">
+    Visual indicators for recording and streaming status
+  </Card>
+</CardGroup>
+
+## Quick Recording
+
+### Command Line Recording
+Record specific commands directly:
+
+```bash
+dx build --record        # Record the build command
+dx deploy --record       # Record deployment process
+```
+
+### Interactive Session Recording  
+Start recording with live streaming:
+
+```bash
+dx --live               # Start live streaming session
+dx --record             # Start recording session
+```
+
+## Configuration
+
+### Basic Setup
+```toml
+# config.toml
+[asciinema]
+enabled = true
+external = true          # Record external commands too
+dir = "./recordings"     # Output directory  
+file_prefix = "session"  # Filename prefix
+quiet = true            # Suppress prompts
+overwrite = true        # Overwrite existing files
+```
+
+### Live Streaming Setup
+```toml  
+[asciinema]
+enabled = true
+stream = true           # Enable streaming mode
+stream_mode = "remote"  # or "local"
+remote = "your-stream-id"
+title = "dx Development Session"
+```
+
+## Recording Modes
+
+### Internal Recording
+Records dx TUI sessions and command output:
+- Menu navigation and selections
+- Command execution with full output
+- File viewing and Markdown rendering
+- All keyboard interactions
+
+### External Recording  
+Records external shell commands:
+- Editor sessions (vim, nano, etc.)
+- Interactive tools and applications
+- Shell scripting and debugging
+- System administration tasks
+
+## Live Streaming
+
+### Remote Streaming
+Stream to asciinema.org or compatible services:
+
+```bash
+# Automatic URL detection and browser opening
+dx --live
+# Live streaming at https://asciinema.org/a/abc123
+```
+
+### Local Streaming
+Stream to local network or custom servers:
+
+```toml
+[asciinema] 
+stream_mode = "local"
+local_addr = "127.0.0.1:9000"
+```
+
+## Status Indicators
+
+### Recording Badge
+When recording is active, dx shows a status badge:
+- 🔴 **⏺ recording** - Session being recorded
+- 📡 **Streaming (remote)** - Live stream active
+- 🖥️ **Streaming (local)** - Local stream active
+
+### Visual Feedback
+- Blinking red dot for live streams
+- Status bar indicators
+- Recording duration timers
+- File path notifications
+
+## File Management
+
+### Automatic Naming
+dx generates descriptive filenames automatically:
+
+```
+Format: {prefix}-{timestamp}.cast
+Example: session-1703123456.cast
+```
+
+### Output Directory Structure
+```
+recordings/
+├── session-1703123456.cast
+├── build-1703123789.cast  
+└── deploy-1703124012.cast
+```
+
+## Integration Features
+
+### Menu Command Recording
+Wrap any menu command with recording:
+
+```toml
+[[items]]
+name = "Recorded Build"
+description = "Build with session recording"
+cmd = "cargo build --release"
+# Automatically recorded when asciinema.external = true
+```
+
+### Relaunch Recording
+Record dx updates and relaunches:
+
+```toml
+[asciinema]
+on_relaunch = true      # Record update cycles
+```
+
+## Sharing and Playback
+
+### Playback Locally
+```bash
+asciinema play session-1703123456.cast
+```
+
+### Upload to asciinema.org
+```bash
+asciinema upload session-1703123456.cast
+```
+
+### Embed in Documentation
+Generated recordings can be embedded in:
+- README files
+- Documentation websites  
+- Training materials
+- Bug reports and demos
+
+## Advanced Configuration
+
+### Environment Variables
+dx sets environment variables during recording:
+
+```bash
+echo $DX_ASCIINEMA        # "record" or "stream"
+echo $DX_ASC_FILE         # Recording file path (record mode)
+echo $DX_ASC_MODE         # "remote" or "local" (stream mode)
+```
+
+### Integration with CI/CD
+```yaml
+# GitHub Actions example
+- name: Record dx workflow
+  run: |
+    dx build --record
+    dx test --record  
+    dx deploy --record
+```
+
+<Tip>
+  Use recording for debugging, documentation, and sharing complex workflows with team members.
+</Tip>
+
+<Warning>
+  Be mindful of sensitive information when recording or streaming terminal sessions.
+</Warning>

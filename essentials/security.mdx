@@ -1,0 +1,201 @@
+---
+title: 'Security & Safety'
+description: 'Secure by design with transparent installations, no root requirements, and explicit confirmations'
+icon: 'shield-check'
+---
+
+dx is designed with security and transparency as core principles, providing a safe terminal experience without compromising functionality.
+
+## Security by Design
+
+<CardGroup cols={2}>
+  <Card title="No Root Required" icon="user-shield">
+    Installs and runs entirely in user space without privileged access
+  </Card>
+  <Card title="No Daemons" icon="server">
+    Single binary with no background processes or system services
+  </Card>
+  <Card title="Transparent Installer" icon="eye">
+    Inspectable installation script hosted on public repositories
+  </Card>
+  <Card title="Plain Text Config" icon="file-text">
+    All configurations in readable TOML/YAML/JSON formats
+  </Card>
+</CardGroup>
+
+## Installation Security
+
+### Inspectable Installer
+The dx installer is completely transparent:
+
+```bash
+# View the installer before running
+curl -s https://usedx.sh/install | less
+
+# Or inspect directly on GitHub
+# https://github.com/dx-cli/dx/blob/main/install.sh
+```
+
+### No Privilege Escalation
+- Falls back to `~/.local/bin` when sudo unavailable
+- Never requires root access to function
+- Respects user permissions and environment
+
+### Integrity Verification
+- SHA256 checksum verification for all downloads
+- Signed releases with verification instructions
+- Deterministic builds for reproducibility
+
+## Runtime Security
+
+### Process Isolation
+```toml
+# Commands run in isolated processes
+[[items]]
+name = "Safe Command"
+cmd = "echo 'This runs safely in isolation'"
+```
+
+### Explicit Confirmations
+dx requires explicit user confirmation for potentially destructive actions:
+
+- **Process Termination** - Ctrl+C shows kill confirmation
+- **File Operations** - Clear prompts for file modifications  
+- **External Commands** - Visual distinction for shell escapes
+- **Configuration Changes** - Confirmation for sensitive settings
+
+### Input Sanitization
+- Command injection protection
+- Path traversal prevention  
+- Environment variable validation
+- User input escaping
+
+## Configuration Security
+
+### Plain Text Transparency
+All dx configurations are stored in readable text formats:
+
+```toml
+# config.toml - completely transparent
+[telemetry]
+enabled = false          # Clearly visible opt-in
+endpoint = "https://..."
+
+[asciinema] 
+enabled = true
+external = false         # Explicit external access control
+```
+
+### Local vs Global Separation
+```
+~/.dx/config.toml        # Global user settings
+./config.toml            # Project-specific overrides
+```
+
+- Clear separation of scope and permissions
+- Project configs cannot modify global settings
+- Override controls with `allow_project_override`
+
+## Process Control
+
+### Safe Command Execution
+dx provides multiple layers of process safety:
+
+<ResponseField name="Visible Commands" type="safety">
+  All commands are displayed before execution with full command line visible
+</ResponseField>
+
+<ResponseField name="Kill Protection" type="safety">
+  Process termination requires explicit confirmation to prevent accidental kills
+</ResponseField>
+
+<ResponseField name="External Mode Safety" type="safety">
+  External shell commands clearly indicated with pause prompts and return confirmations
+</ResponseField>
+
+### Environment Protection
+- Commands inherit limited environment variables
+- No automatic PATH manipulation  
+- Explicit working directory control
+- Process group isolation
+
+## Network Security
+
+### Optional Telemetry
+Telemetry is completely optional and transparent:
+
+```toml
+[telemetry]
+enabled = false          # Default: disabled
+endpoint = "https://..."  # Clearly visible destination
+```
+
+- Disabled by default
+- Only sends failed command logs when enabled
+- Clear endpoint visibility
+- Easy to disable at any time
+
+### Recording Privacy
+Asciinema integration respects privacy:
+
+- Local recordings by default
+- Streaming requires explicit configuration
+- No automatic uploads
+- Clear recording status indicators
+
+## File System Safety
+
+### Read-Only by Default
+dx operates in read-only mode for most operations:
+- Menu files are read-only
+- MOTD files are display-only
+- Configuration changes require explicit user action
+
+### Limited File Access
+- Only accesses files in current directory and subdirectories
+- No automatic system file access
+- Respects file permissions and ownership
+
+## Best Practices
+
+### Secure Configuration
+```toml
+# Recommended secure defaults
+[asciinema]
+enabled = false          # Only enable when needed
+
+[telemetry]  
+enabled = false          # Opt-in only
+
+[update]
+on_start = false         # Manual updates only
+```
+
+### Menu Security
+```toml
+# Safe menu practices
+[[items]]
+name = "Safe Build"
+description = "Build with explicit output"
+cmd = "cargo build --verbose"  # Verbose for transparency
+external = false               # Keep inside dx for control
+```
+
+### Environment Variables
+```bash
+# Set secure environment
+export DX_LOG_LEVEL=info    # Control logging verbosity
+export DX_CONFIG_DIR=~/.dx  # Explicit config location
+```
+
+<Tip>
+  Regular security updates are distributed through the same transparent installation mechanism.
+</Tip>
+
+<Note>
+  dx maintains detailed security documentation and welcomes security research. See our security policy for responsible disclosure guidelines.
+</Note>
+
+<Warning>
+  While dx itself is secure, always review the commands and scripts you configure in your menus.
+</Warning>

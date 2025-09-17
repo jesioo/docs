@@ -1,94 +1,114 @@
 ---
 title: 'Development'
-description: 'Preview changes locally to update your docs'
+description: 'Develop and contribute to dx'
 ---
 
 <Info>
   **Prerequisites**:
-  - Node.js version 19 or higher
-  - A docs repository with a `docs.json` file
+  - Rust toolchain (latest stable)
+  - Git for version control
 </Info>
 
-Follow these steps to install and run Mintlify on your operating system.
+Follow these steps to set up dx for local development.
 
 <Steps>
-<Step title="Install the Mintlify CLI">
+<Step title="Clone the repository">
 
 ```bash
-npm i -g mint
+git clone https://github.com/dx-cli/dx.git
+cd dx
 ```
 </Step>
 
-<Step title="Preview locally">
+<Step title="Build and install locally">
 
-Navigate to your docs directory where your `docs.json` file is located, and run the following command:
+Use the included install script for development builds:
 
 ```bash
-mint dev
+# Build and install to ~/.local/bin (recommended)
+./install.sh
+
+# Uninstall
+./uninstall.sh
 ```
 
-A local preview of your documentation will be available at `http://localhost:3000`.
+The install script builds the project in release mode and copies the binary to `~/.local/bin/dx`.
 
 </Step>
 </Steps>
 
-## Custom ports
+## Development workflow
 
-By default, Mintlify uses port 3000. You can customize the port Mintlify runs on by using the `--port` flag. For example, to run Mintlify on port 3333, use this command:
-
-```bash
-mint dev --port 3333
-```
-
-If you attempt to run Mintlify on a port that's already in use, it will use the next available port:
-
-```md
-Port 3000 is already in use. Trying 3001 instead.
-```
-
-## Mintlify versions
-
-Please note that each CLI release is associated with a specific version of Mintlify. If your local preview does not align with the production version, please update the CLI:
+dx includes a built-in development menu accessible via the `dx.yaml` configuration:
 
 ```bash
-npm mint update
+# Build and install dx
+dx build.install
+
+# Run tests
+dx test
+
+# Run clippy for linting
+dx clippy
 ```
 
-## Validating links
+## Testing
 
-The CLI can assist with validating links in your documentation. To identify any broken links, use the following command:
+Run the test suite:
 
 ```bash
-mint broken-links
+cargo test
 ```
 
-## Deployment
+dx includes several test modules:
+- `tests/exit_codes.rs` - Exit code handling tests
+- `tests/motd_asciinema_menu_markdown.rs` - MOTD and markdown tests  
+- `tests/checks_and_router.rs` - Menu and routing tests
 
-If the deployment is successful, you should see the following:
+## Code structure
 
-<Frame>
-  <img src="/images/checks-passed.png" alt="Screenshot of a deployment confirmation message that says All checks have passed." style={{ borderRadius: '0.5rem' }} />
-</Frame>
+The dx codebase is organized as follows:
 
-## Code formatting
+- `src/main.rs` - Main entry point and CLI argument parsing
+- `src/menu.rs` - Menu system and item handling
+- `src/exec.rs` - Command execution and PTY management
+- `src/markdown.rs` - Markdown rendering
+- `src/asciinema.rs` - Recording and streaming integration
+- `src/config.rs` - Configuration management
+- `src/screens/` - TUI screen implementations
 
-We suggest using extensions on your IDE to recognize and format MDX. If you're a VSCode user, consider the [MDX VSCode extension](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) for syntax highlighting, and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for code formatting.
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Make your changes and add tests
+4. Run `cargo clippy -- -D warnings` to check for issues
+5. Run `cargo test` to ensure all tests pass
+6. Submit a pull request
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title='Error: Could not load the "sharp" module using the darwin-arm64 runtime'>
-
-    This may be due to an outdated version of node. Try the following:
-    1. Remove the currently-installed version of the CLI: `npm remove -g mint`
-    2. Upgrade to Node v19 or higher.
-    3. Reinstall the CLI: `npm i -g mint`
+  <Accordion title="Build fails">
+    Make sure you have the latest stable Rust toolchain:
+    
+    ```bash
+    rustup update stable
+    ```
   </Accordion>
 
-  <Accordion title="Issue: Encountering an unknown error">
-  
-    Solution: Go to the root of your device and delete the `~/.mintlify` folder. Then run `mint dev` again.
+  <Accordion title="Binary not found after install">
+    Ensure `~/.local/bin` is in your PATH:
+    
+    ```bash
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+    source ~/.bashrc
+    ```
+  </Accordion>
+
+  <Accordion title="Permission denied">
+    If you get permission errors, the install script will automatically fall back to `~/.local/bin` instead of system-wide installation.
   </Accordion>
 </AccordionGroup>
 
-Curious about what changed in the latest CLI version? Check out the [CLI changelog](https://www.npmjs.com/package/mintlify?activeTab=versions).
+Check the [GitHub issues](https://github.com/dx-cli/dx/issues) for known problems and solutions.

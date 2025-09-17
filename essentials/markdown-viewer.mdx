@@ -1,0 +1,162 @@
+---
+title: 'Markdown Viewer'  
+description: 'Rich Markdown rendering with clickable footnotes, MOTD system, and interactive navigation'
+icon: 'markdown'
+---
+
+dx includes one of the most advanced Markdown rendering systems for terminal applications, providing rich formatting and interactive navigation.
+
+## Rich Text Formatting
+
+dx supports comprehensive Markdown formatting with proper terminal rendering:
+
+<CardGroup cols={2}>
+  <Card title="Typography" icon="font">
+    Headers, emphasis, code blocks, and lists with proper hierarchy
+  </Card>
+  <Card title="Code Syntax" icon="code">
+    Syntax highlighting for code blocks in multiple languages
+  </Card>
+  <Card title="Interactive Elements" icon="mouse-pointer">
+    Clickable links, footnotes, and cross-references
+  </Card>
+  <Card title="ASCII Art" icon="image">
+    Special rendering modes for ASCII art and diagrams
+  </Card>
+</CardGroup>
+
+## Supported Elements
+
+### Text Formatting
+- **Headers** (H1-H6) with visual hierarchy
+- **Bold**, *italic*, and `inline code`
+- Strikethrough and underline text
+- Block quotes with visual indentation
+
+### Lists and Structure  
+- Bulleted and numbered lists
+- Nested lists with proper indentation
+- Task lists with checkboxes ☑️
+- Definition lists and tables
+
+### Code Blocks
+````markdown
+```rust
+fn main() {
+    println!("Syntax highlighting supported!");
+}
+```
+````
+
+## Interactive Navigation
+
+### Clickable Footnotes
+dx converts Markdown footnotes into interactive navigation:
+
+```markdown
+This is text with a footnote[1].
+
+[1]: Link to another document
+```
+
+- Press **1-9** to navigate to footnotes
+- Click with mouse to follow links  
+- Automatic cross-document navigation
+
+### Link Following
+Links to local `.md` files become navigable:
+- Relative paths resolved automatically
+- Seamless navigation between documents
+- Back navigation with `b` or `Backspace`
+
+## MOTD System
+
+### Message of the Day
+dx displays a customizable MOTD (Message of the Day) at the top of the interface:
+
+```markdown
+<!-- MOTD.md -->
+# Welcome to Project X
+
+> Status: Development in progress
+
+## Quick Commands
+- Build: `dx build`  
+- Test: `dx test`
+- Deploy: `dx deploy`
+```
+
+### ASCII Art Support
+Force ASCII art rendering without Markdown processing:
+
+```markdown
+<!-- dx:ascii -->
+██████╗ ██╗  ██╗
+██╔══██╗╚██╗██╔╝
+██║  ██║ ╚███╔╝ 
+██║  ██║ ██╔██╗ 
+██████╔╝██╔╝ ██╗
+╚═════╝ ╚═╝  ╚═╝
+```
+
+## Display Controls
+
+### Toggle Keys
+Control how content is displayed with live keyboard shortcuts:
+
+<ResponseField name="Markdown Toggle" type="key">
+  **m** - Toggle Markdown rendering on/off per file
+</ResponseField>
+
+<ResponseField name="Text Wrapping" type="key">
+  **w** - Toggle text wrapping (useful for ASCII art)
+</ResponseField>
+
+<ResponseField name="Auto-Scroll" type="key">
+  **a** - Toggle automatic scrolling to follow new content
+</ResponseField>
+
+<ResponseField name="Dimming" type="key">
+  **d** - Toggle text dimming for better focus
+</ResponseField>
+
+## Scrolling and Navigation
+
+### Smooth Scrolling
+- **j/k** or **↑/↓** - Line-by-line navigation
+- **Page Up/Down** - Full page scrolling  
+- **g/G** - Jump to beginning/end
+- **Mouse wheel** - Smooth scrolling
+
+### Content Search
+Navigate large documents efficiently:
+- Automatic heading detection
+- Quick jump to sections
+- Visual progress indicators
+
+## File Integration
+
+### Automatic Detection
+dx automatically renders Markdown for files with extensions:
+- `.md`, `.markdown`
+- `.txt` files with Markdown content
+- README files in any format
+
+### MOTD Integration  
+The MOTD system integrates seamlessly with your project:
+
+```toml
+# menu.toml
+[[items]]
+name = "Documentation"  
+description = "Project documentation"
+file = "docs/README.md"
+```
+
+<Tip>
+  Combine MOTD with menu aliases to create self-documenting project interfaces that guide new team members through common workflows.
+</Tip>
+
+<Note>
+  Markdown rendering respects your terminal's color scheme and adapts to both light and dark themes automatically.
+</Note>

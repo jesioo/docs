@@ -1,0 +1,131 @@
+---
+title: 'Menu System'
+description: 'Powerful menu configuration with nested structures, aliases, and interactive forms'
+icon: 'list'
+---
+
+The dx menu system is the heart of your terminal workflow, allowing you to organize commands, files, and interactive forms in a hierarchical structure.
+
+## Configuration Formats
+
+dx supports multiple configuration formats for maximum flexibility:
+
+<Tabs>
+  <Tab title="TOML">
+    ```toml
+    [[items]]
+    name = "Build Project"
+    description = "Compile and build the project"
+    cmd = "cargo build --release"
+    alias = "build"
+    ```
+  </Tab>
+  
+  <Tab title="YAML">
+    ```yaml
+    items:
+      - name: Build Project
+        description: Compile and build the project
+        cmd: cargo build --release
+        alias: build
+    ```
+  </Tab>
+  
+  <Tab title="JSON">
+    ```json
+    {
+      "items": [
+        {
+          "name": "Build Project",
+          "description": "Compile and build the project", 
+          "cmd": "cargo build --release",
+          "alias": "build"
+        }
+      ]
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Auto-Detection
+
+dx automatically searches for menu files in this priority order:
+
+1. `dx.yaml`, `dx.yml`, `dx.toml`, `dx.json`
+2. `menu.yaml`, `menu.yml`, `menu.toml`, `menu.json`
+
+## Item Types
+
+<CardGroup cols={2}>
+  <Card title="Commands" icon="terminal">
+    Execute shell commands with full PTY support
+  </Card>
+  <Card title="Files" icon="file">
+    Display files with rich Markdown rendering
+  </Card>
+  <Card title="Nested Menus" icon="folder">
+    Organize items in hierarchical structures  
+  </Card>
+  <Card title="Interactive Forms" icon="wpforms">
+    Collect user input with dynamic field validation
+  </Card>
+</CardGroup>
+
+## Aliases for CLI Access
+
+```bash
+dx build        # Run aliased command directly
+dx test         # Execute test suite 
+dx aliases      # List all available aliases
+```
+
+## Advanced Features
+
+### Nested Menu Structure
+Create organized hierarchies with unlimited depth:
+
+```toml
+[[items]]
+name = "Development Tools"
+description = "Build, test, and deploy commands"
+
+[[items.children]]
+name = "Build Release"
+cmd = "cargo build --release" 
+alias = "build"
+
+[[items.children]] 
+name = "Run Tests"
+cmd = "cargo test"
+alias = "test"
+```
+
+### Interactive Forms
+Build dynamic forms that collect input and execute commands:
+
+```toml
+[[items]]
+name = "Deploy Application"
+description = "Deploy to specified environment"
+
+[items.form]
+title = "Application Deployment"
+
+[[items.form.fields]]
+name = "environment"
+label = "Target Environment"
+type = "select"
+options = ["staging", "production"]
+
+[[items.form.fields]]
+name = "version" 
+label = "Version Tag"
+placeholder = "v1.0.0"
+
+[items.form]
+submit = "deploy.sh {environment} {version}"
+```
+
+<Note>
+  Menu configurations support environment variable expansion and can reference relative file paths for maximum flexibility.
+</Note>

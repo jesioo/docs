@@ -1,0 +1,240 @@
+---
+title: 'Aliases'
+description: 'How aliases make dx perfect for AI agents and automated workflows'
+icon: 'robot'
+---
+
+Aliases are one of dx's most powerful features for AI integration, enabling agents to interact with your development workflow through simple, memorable commands.
+
+## Why Aliases Matter for AI
+
+<CardGroup cols={2}>
+  <Card title="Predictable Interface" icon="target">
+    AI agents can reliably call `dx build`, `dx test`, `dx deploy` across any project
+  </Card>
+  <Card title="Context Awareness" icon="brain">
+    Aliases provide semantic meaning - `dx deploy` is clearer than `./scripts/deploy.sh`
+  </Card>
+  <Card title="Standardization" icon="handshake">
+    Teams can standardize workflows so AI agents work consistently
+  </Card>
+  <Card title="Non-Interactive" icon="terminal">
+    Perfect for automated environments where TUI interaction isn't possible
+  </Card>
+</CardGroup>
+
+## AI-Friendly Command Structure
+
+### Direct Execution
+AI agents can execute commands without TUI interaction:
+
+```bash
+# AI agent can call these directly
+dx build                 # Build the project
+dx test                  # Run tests  
+dx deploy                # Deploy to staging
+dx check                 # Run linting/checks
+```
+
+### List Available Commands
+```bash
+dx aliases              # AI can discover available commands
+# Output:
+# ALIAS    NAME           TYPE  DETAILS
+# build    Build Project  cmd   cargo build --release
+# test     Run Tests      cmd   cargo test
+# deploy   Deploy App     cmd   ./deploy.sh staging
+```
+
+## Setting Up AI-Friendly Aliases
+
+### Essential Development Aliases
+```toml
+# dx.yaml
+items:
+  - name: "Build Project"
+    alias: "build"
+    description: "Compile and build the project for production"
+    cmd: "cargo build --release"
+    
+  - name: "Run Tests"
+    alias: "test"  
+    description: "Execute all test suites"
+    cmd: "cargo test"
+    
+  - name: "Lint Code"
+    alias: "lint"
+    description: "Run code quality checks"
+    cmd: "cargo clippy -- -D warnings"
+    
+  - name: "Format Code"
+    alias: "format"
+    description: "Auto-format source code"
+    cmd: "cargo fmt"
+```
+
+### Deployment & Operations
+```toml
+items:
+  - name: "Deploy Staging"
+    alias: "deploy"
+    description: "Deploy application to staging environment"
+    cmd: "kubectl apply -f k8s/staging/"
+    
+  - name: "Check Status"
+    alias: "status"  
+    description: "Check application health and status"
+    cmd: "kubectl get pods -l app=myapp"
+    
+  - name: "View Logs"
+    alias: "logs"
+    description: "Tail application logs"  
+    cmd: "kubectl logs -f deployment/myapp"
+```
+
+## AI Agent Integration Patterns
+
+### GitHub Actions Integration
+```yaml
+# .github/workflows/ai-workflow.yml
+name: AI-Powered Workflow
+on: [push]
+jobs:
+  ai-tasks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dx
+        run: curl -fsSL https://usedx.sh | sh -s -- -y
+        
+      - name: AI Build
+        run: dx build
+        
+      - name: AI Test  
+        run: dx test
+        
+      - name: AI Quality Check
+        run: dx lint
+```
+
+### Local AI Development
+```bash
+# AI agent working on codebase
+dx build                 # ✅ Build succeeds
+dx test                  # ❌ Tests fail
+dx format                # 🔧 Auto-fix formatting
+dx test                  # ✅ Tests now pass
+dx deploy                # 🚀 Deploy to staging
+```
+
+## Advanced AI Features
+
+### Command Discovery
+AI agents can introspect available commands:
+
+```bash
+# Agent discovers available operations
+dx aliases | grep -E "(build|test|deploy)"
+
+# Agent can read command details
+dx aliases | grep "test" | cut -f4
+# Output: cargo test --all-features
+```
+
+### Exit Code Integration
+```bash
+# AI can check success/failure
+dx build
+echo "Build result: $?"
+
+# AI can chain commands conditionally  
+dx build && dx test && dx deploy
+```
+
+### Recording for Analysis
+```bash
+# AI can record sessions for later analysis
+dx build --record        # Creates timestamped recording
+dx test --record         # AI can replay/analyze later
+```
+
+## Best Practices for AI Integration
+
+### 1. Use Semantic Aliases
+```toml
+# ✅ Good - Clear semantic meaning
+alias = "build"          # AI knows this builds the project
+alias = "test"           # AI knows this runs tests
+alias = "deploy"         # AI knows this deploys
+
+# ❌ Avoid - Unclear meaning  
+alias = "cmd1"           # AI doesn't know what this does
+alias = "run-script"     # Too generic
+```
+
+### 2. Provide Descriptions
+```toml
+[[items]]
+name = "Build Production"
+alias = "build"
+description = "Compile project for production with optimizations"
+cmd = "cargo build --release"
+```
+
+### 3. Standardize Across Projects
+```bash
+# Same aliases work across all projects
+dx build                 # Always builds the project
+dx test                  # Always runs tests  
+dx deploy                # Always deploys (to appropriate env)
+dx status                # Always checks health
+```
+
+### 4. Handle Different Environments
+```toml
+[[items]]
+name = "Deploy to Staging"
+alias = "deploy"
+description = "Deploy to staging environment"
+cmd = "deploy.sh staging"
+
+[[items]] 
+name = "Deploy to Production"
+alias = "deploy-prod"
+description = "Deploy to production (requires confirmation)"
+cmd = "deploy.sh production"
+```
+
+## Integration with AI Coding Assistants
+
+### Cursor Integration
+dx aliases work seamlessly with Cursor's terminal:
+
+```javascript
+// Cursor can suggest and run dx commands
+const buildProject = () => {
+    // User: "build the project"
+    // Cursor: suggests "dx build"
+    terminal.run('dx build');
+}
+```
+
+### Claude/ChatGPT Integration
+```markdown
+**System Prompt for AI:**
+This project uses dx for workflow automation. Key commands:
+- `dx build` - Build the project
+- `dx test` - Run tests
+- `dx deploy` - Deploy to staging  
+- `dx aliases` - List all available commands
+
+Always use these standardized commands instead of direct tool invocation.
+```
+
+<Tip>
+  Create a `DEVELOPMENT.md` file documenting your dx aliases so AI agents can understand your project's workflow.
+</Tip>
+
+<Note>
+  Aliases make dx workflows discoverable and standardizable, perfect for AI agents that need predictable interfaces.
+</Note>

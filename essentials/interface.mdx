@@ -1,0 +1,80 @@
+---
+title: 'Terminal Interface'
+description: 'Clean, keyboard-first TUI with mouse support and Vim-like navigation'
+icon: 'terminal'
+---
+
+dx provides a modern terminal user interface (TUI) that combines keyboard efficiency with mouse convenience.
+
+## Design Philosophy
+
+<Card title="Keyboard-First" icon="keyboard">
+  Vim-like navigation with j/k movement, intuitive shortcuts, and quick actions
+</Card>
+
+<Card title="Mouse-Friendly" icon="mouse-pointer">
+  Full mouse support for scrolling, clicking, and navigation without losing efficiency
+</Card>
+
+<Card title="Clean Layout" icon="layout">
+  Consistent design with clear visual hierarchy and gentle confirmations
+</Card>
+
+## Interface Elements
+
+### Main Layout
+
+```
+┌─────────────────────────────────┐
+│          MOTD (top)             │
+├─────────────────────────────────┤
+│                                 │
+│         Content Area            │
+│      (menu/output/files)        │
+│                                 │
+├─────────────────────────────────┤
+│       Status Bar (bottom)       │
+└─────────────────────────────────┘
+```
+
+### Navigation Keys
+
+<ResponseField name="Movement" type="keys">
+  **j/k** or **↑/↓** - Move up/down  
+  **Enter** - Select/Execute  
+  **Esc** or **q** - Back/Exit  
+  **:q Enter** - Vim-style quit
+</ResponseField>
+
+<ResponseField name="Scrolling" type="keys">
+  **Page Up/Down** - Page navigation  
+  **g/G** - Jump to top/bottom  
+  **Mouse wheel** - Smooth scrolling
+</ResponseField>
+
+### Visual Feedback
+
+- **Spinners** - Show running processes with animated indicators
+- **Progress** - Real-time command execution with timers
+- **Highlights** - Clear selection and focus indicators
+- **Colors** - Syntax highlighting and status colors
+
+## Overlays & Status
+
+<Tip>
+  Press **O** or **F10** to toggle the CPU overlay for system monitoring
+</Tip>
+
+### Status Bar Features
+- Dynamic command output
+- Process status indicators  
+- Recording/streaming badges
+- FPS counter (when enabled)
+
+## Responsive Design
+
+dx automatically adapts to different terminal sizes and provides optimal viewing experience across various screen dimensions.
+
+<Note>
+  The interface uses your terminal's color scheme and respects system-wide dark/light mode preferences.
+</Note>

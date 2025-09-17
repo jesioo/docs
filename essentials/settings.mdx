@@ -1,318 +1,239 @@
 ---
-title: 'Global Settings'
-description: 'Mintlify gives you complete control over the look and feel of your documentation using the docs.json file'
+title: 'Configuration'
+description: 'Complete guide to dx configuration options and settings'
 icon: 'gear'
 ---
 
-Every Mintlify site needs a `docs.json` file with the core configuration settings. Learn more about the [properties](#properties) below.
+dx uses `config.toml` (or `config.yaml`/`config.json`) files to customize behavior. Configuration can be set globally (`~/.dx/config.toml`) or per-project (`./config.toml`).
 
-## Properties
+## Configuration Files
 
-<ResponseField name="name" type="string" required>
-Name of your project. Used for the global title.
+dx looks for configuration in this order:
 
-Example: `mintlify`
+1. **Local project**: `config.toml`, `config.yaml`, or `config.json` in current directory
+2. **Global**: `~/.dx/config.toml`, `~/.dx/config.yaml`, or `~/.dx/config.json`
 
+Project configuration overrides global settings when `allow_project_override` is true (default).
+
+## Basic Settings
+
+<ResponseField name="allow_project_override" type="boolean" default="true">
+  Allow local `./config.toml` to override global `~/.dx/config.toml` settings.
 </ResponseField>
 
-<ResponseField name="navigation" type="Navigation[]" required>
-  An array of groups with all the pages within that group
-  <Expandable title="Navigation">
-    <ResponseField name="group" type="string">
-    The name of the group.
-
-    Example: `Settings`
-
-    </ResponseField>
-    <ResponseField name="pages" type="string[]">
-    The relative paths to the markdown files that will serve as pages.
-
-    Example: `["customization", "page"]`
-
-    </ResponseField>
-
-  </Expandable>
+<ResponseField name="markdown_enabled" type="boolean" default="true">
+  Enable global Markdown rendering. Can be toggled per-file with `m` key.
 </ResponseField>
 
-<ResponseField name="logo" type="string or object">
-  Path to logo image or object with path to "light" and "dark" mode logo images
-  <Expandable title="Logo">
-    <ResponseField name="light" type="string">
-      Path to the logo in light mode
-    </ResponseField>
-    <ResponseField name="dark" type="string">
-      Path to the logo in dark mode
-    </ResponseField>
-    <ResponseField name="href" type="string" default="/">
-      Where clicking on the logo links you to
-    </ResponseField>
-  </Expandable>
+<ResponseField name="output_dim" type="boolean" default="true">
+  Dim baseline text in output view for better readability.
 </ResponseField>
 
-<ResponseField name="favicon" type="string">
-  Path to the favicon image
+<ResponseField name="show_fps" type="boolean" default="true">
+  Display FPS counter in status bar for performance monitoring.
 </ResponseField>
 
-<ResponseField name="colors" type="Colors">
-  Hex color codes for your global theme
-  <Expandable title="Colors">
-    <ResponseField name="primary" type="string" required>
-      The primary color. Used for most often for highlighted content, section
-      headers, accents, in light mode
-    </ResponseField>
-    <ResponseField name="light" type="string">
-      The primary color for dark mode. Used for most often for highlighted
-      content, section headers, accents, in dark mode
-    </ResponseField>
-    <ResponseField name="dark" type="string">
-      The primary color for important buttons
-    </ResponseField>
-    <ResponseField name="background" type="object">
-      The color of the background in both light and dark mode
-      <Expandable title="Object">
-        <ResponseField name="light" type="string" required>
-          The hex color code of the background in light mode
-        </ResponseField>
-        <ResponseField name="dark" type="string" required>
-          The hex color code of the background in dark mode
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
-  </Expandable>
+## MOTD Settings
+
+<ResponseField name="motd_wrap" type="boolean" default="true">
+  Enable soft-wrap for MOTD Markdown content.
 </ResponseField>
 
-<ResponseField name="topbarLinks" type="TopbarLink[]">
-  Array of `name`s and `url`s of links you want to include in the topbar
-  <Expandable title="TopbarLink">
-    <ResponseField name="name" type="string">
-    The name of the button.
-
-    Example: `Contact us`
-    </ResponseField>
-    <ResponseField name="url" type="string">
-    The url once you click on the button. Example: `https://mintlify.com/docs`
-    </ResponseField>
-
-  </Expandable>
+<ResponseField name="motd_color" type="string">
+  Hex color for MOTD text. Examples: `"#3B82F6"`, `"#10B981"`
 </ResponseField>
 
-<ResponseField name="topbarCtaButton" type="Call to Action">
-  <Expandable title="Topbar Call to Action">
-    <ResponseField name="type" type={'"link" or "github"'} default="link">
-    Link shows a button. GitHub shows the repo information at the url provided including the number of GitHub stars.
-    </ResponseField>
-    <ResponseField name="url" type="string">
-    If `link`: What the button links to.
-    
-    If `github`: Link to the repository to load GitHub information from.
-    </ResponseField>
-    <ResponseField name="name" type="string">
-    Text inside the button. Only required if `type` is a `link`.
-    </ResponseField>
+## Theme Settings
 
-  </Expandable>
+<ResponseField name="theme" type="string" default="dark">
+  Base color theme. Options: `"dark"` or `"light"`
 </ResponseField>
 
-<ResponseField name="versions" type="string[]">
-  Array of version names. Only use this if you want to show different versions
-  of docs with a dropdown in the navigation bar.
+<ResponseField name="theme_file" type="string">
+  Path to external YAML theme file (should end with `.dx-theme`)
 </ResponseField>
 
-<ResponseField name="anchors" type="Anchor[]">
-  An array of the anchors, includes the `icon`, `color`, and `url`.
-  <Expandable title="Anchor">
-    <ResponseField name="icon" type="string">
-    The [Font Awesome](https://fontawesome.com/search?q=heart) icon used to feature the anchor.
-
-    Example: `comments`
-    </ResponseField>
-    <ResponseField name="name" type="string">
-    The name of the anchor label.
-
-    Example: `Community`
-    </ResponseField>
-    <ResponseField name="url" type="string">
-      The start of the URL that marks what pages go in the anchor. Generally, this is the name of the folder you put your pages in.
-    </ResponseField>
-    <ResponseField name="color" type="string">
-      The hex color of the anchor icon background. Can also be a gradient if you pass an object with the properties `from` and `to` that are each a hex color.
-    </ResponseField>
-    <ResponseField name="version" type="string">
-      Used if you want to hide an anchor until the correct docs version is selected.
-    </ResponseField>
-    <ResponseField name="isDefaultHidden" type="boolean" default="false">
-      Pass `true` if you want to hide the anchor until you directly link someone to docs inside it.
-    </ResponseField>
-    <ResponseField name="iconType" default="duotone" type="string">
-      One of: "brands", "duotone", "light", "sharp-solid", "solid", or "thin"
-    </ResponseField>
-
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="topAnchor" type="Object">
-  Override the default configurations for the top-most anchor.
-  <Expandable title="Object">
-    <ResponseField name="name" default="Documentation" type="string">
-      The name of the top-most anchor
-    </ResponseField>
-    <ResponseField name="icon" default="book-open" type="string">
-      Font Awesome icon.
-    </ResponseField>
-    <ResponseField name="iconType" default="duotone" type="string">
-      One of: "brands", "duotone", "light", "sharp-solid", "solid", or "thin"
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="tabs" type="Tabs[]">
-  An array of navigational tabs.
-  <Expandable title="Tabs">
-    <ResponseField name="name" type="string">
-      The name of the tab label.
-    </ResponseField>
-    <ResponseField name="url" type="string">
-      The start of the URL that marks what pages go in the tab. Generally, this
-      is the name of the folder you put your pages in.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="api" type="API">
-  Configuration for API settings. Learn more about API pages at [API Components](/api-playground/demo).
-  <Expandable title="API">
-    <ResponseField name="baseUrl" type="string">
-      The base url for all API endpoints. If `baseUrl` is an array, it will enable for multiple base url
-      options that the user can toggle.
-    </ResponseField>
-
-    <ResponseField name="auth" type="Auth">
-      <Expandable title="Auth">
-        <ResponseField name="method" type='"bearer" | "basic" | "key"'>
-          The authentication strategy used for all API endpoints.
-        </ResponseField>
-        <ResponseField name="name" type="string">
-        The name of the authentication parameter used in the API playground.
-
-        If method is `basic`, the format should be `[usernameName]:[passwordName]`
-        </ResponseField>
-        <ResponseField name="inputPrefix" type="string">
-        The default value that's designed to be a prefix for the authentication input field.
-
-        E.g. If an `inputPrefix` of `AuthKey` would inherit the default input result of the authentication field as `AuthKey`.
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
-
-    <ResponseField name="playground" type="Playground">
-      Configurations for the API playground
-
-      <Expandable title="Playground">
-        <ResponseField name="mode" default="show" type='"show" | "simple" | "hide"'>
-          Whether the playground is showing, hidden, or only displaying the endpoint with no added user interactivity `simple`
-
-          Learn more at the [playground guides](/api-playground/demo)
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
-
-    <ResponseField name="maintainOrder" type="boolean">
-      Enabling this flag ensures that key ordering in OpenAPI pages matches the key ordering defined in the OpenAPI file.
-
-      <Warning>This behavior will soon be enabled by default, at which point this field will be deprecated.</Warning>
-    </ResponseField>
-
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="openapi" type="string | string[]">
-  A string or an array of strings of URL(s) or relative path(s) pointing to your
-  OpenAPI file.
+<ResponseField name="theme_overrides" type="object">
+  Key-value pairs to override specific theme tokens
   
-  Examples:
-  <CodeGroup>
-    ```json Absolute
-    "openapi": "https://example.com/openapi.json"
-    ```
-    ```json Relative
-    "openapi": "/openapi.json"
-    ```
-    ```json Multiple
-    "openapi": ["https://example.com/openapi1.json", "/openapi2.json", "/openapi3.json"]
-    ```
-  </CodeGroup>
-
-</ResponseField>
-
-<ResponseField name="footerSocials" type="FooterSocials">
-  An object of social media accounts where the key:property pair represents the social media platform and the account url.
-  
-  Example: 
-  ```json
-  {
-    "x": "https://x.com/mintlify",
-    "website": "https://mintlify.com"
-  }
+  ```toml
+  [theme_overrides]
+  primary = "#FF6B6B"
+  background = "#1A1A1A"
   ```
-  <Expandable title="FooterSocials">
-    <ResponseField name="[key]" type="string">
-    One of the following values `website`, `facebook`, `x`, `discord`, `slack`, `github`, `linkedin`, `instagram`, `hacker-news`
-    
-    Example: `x`
+</ResponseField>
+
+<ResponseField name="theme_dir" type="string">
+  Directory containing `*.dx-theme` files for theme selection
+</ResponseField>
+
+## Status Bar
+
+<ResponseField name="status" type="object">
+  Configuration for the bottom status bar
+  
+  <Expandable title="Status Options">
+    <ResponseField name="text" type="string">
+      Static text to display in status bar
     </ResponseField>
-    <ResponseField name="property" type="string">
-    The URL to the social platform.
-    
-    Example: `https://x.com/mintlify`
+    <ResponseField name="command" type="string">
+      Command to run for dynamic status updates (outputs one line)
     </ResponseField>
   </Expandable>
 </ResponseField>
 
-<ResponseField name="feedback" type="Feedback">
-  Configurations to enable feedback buttons
+Example:
+```toml
+[status]
+text = "dx v2.0"
+# or
+command = "date '+%H:%M'"
+```
 
-  <Expandable title="Feedback">
-    <ResponseField name="suggestEdit" type="boolean" default="false">
-    Enables a button to allow users to suggest edits via pull requests
+## Telemetry
+
+<ResponseField name="telemetry" type="object">
+  Optional telemetry for failed command logs
+  
+  <Expandable title="Telemetry Options">
+    <ResponseField name="enabled" type="boolean" default="false">
+      Enable sending failed command logs to endpoint
     </ResponseField>
-    <ResponseField name="raiseIssue" type="boolean" default="false">
-    Enables a button to allow users to raise an issue about the documentation
+    <ResponseField name="endpoint" type="string">
+      HTTP endpoint for telemetry POST requests
     </ResponseField>
   </Expandable>
 </ResponseField>
 
-<ResponseField name="modeToggle" type="ModeToggle">
-  Customize the dark mode toggle.
-  <Expandable title="ModeToggle">
-    <ResponseField name="default" type={'"light" or "dark"'}>
-      Set if you always want to show light or dark mode for new users. When not
-      set, we default to the same mode as the user's operating system.
+Example:
+```toml
+[telemetry]
+enabled = true
+endpoint = "https://api.example.com/telemetry"
+```
+
+## Auto-Update
+
+<ResponseField name="update" type="object">
+  Automatic build and relaunch configuration
+  
+  <Expandable title="Update Options">
+    <ResponseField name="on_start" type="boolean" default="false">
+      Build and relaunch dx on startup
     </ResponseField>
-    <ResponseField name="isHidden" type="boolean" default="false">
-      Set to true to hide the dark/light mode toggle. You can combine `isHidden` with `default` to force your docs to only use light or dark mode. For example:
-      
-      <CodeGroup>
-      ```json Only Dark Mode
-      "modeToggle": {
-        "default": "dark",
-        "isHidden": true
-      }
-      ```
-
-      ```json Only Light Mode
-      "modeToggle": {
-        "default": "light",
-        "isHidden": true
-      }
-      ```
-      </CodeGroup>
-
+    <ResponseField name="build_cmd" type="string" default="cargo build --release">
+      Command used for building before relaunch
     </ResponseField>
-
+    <ResponseField name="relaunch_path" type="string">
+      Path to executable for relaunch (defaults to `target/release/dx`)
+    </ResponseField>
+    <ResponseField name="preserve_args" type="boolean" default="true">
+      Reuse current CLI arguments on relaunch
+    </ResponseField>
   </Expandable>
 </ResponseField>
 
-<ResponseField name="backgroundImage" type="string">
-  A background image to be displayed behind every page. See example with
-  [Infisical](https://infisical.com/docs) and [FRPC](https://frpc.io).
+Example:
+```toml
+[update]
+on_start = true
+build_cmd = "cargo build --release"
+relaunch_path = "target/release/dx"
+preserve_args = true
+```
+
+## Asciinema Integration
+
+<ResponseField name="asciinema" type="object">
+  Recording and live streaming configuration
+  
+  <Expandable title="Asciinema Options">
+    <ResponseField name="enabled" type="boolean" default="false">
+      Master switch for asciinema integration
+    </ResponseField>
+    <ResponseField name="external" type="boolean" default="false">
+      Wrap external (passthrough) commands with asciinema
+    </ResponseField>
+    <ResponseField name="on_relaunch" type="boolean" default="false">
+      Wrap update relaunch sessions with asciinema
+    </ResponseField>
+    <ResponseField name="dir" type="string">
+      Directory to save recordings (defaults to current directory)
+    </ResponseField>
+    <ResponseField name="file_prefix" type="string" default="dx">
+      Filename prefix; final name becomes `<prefix>-<unix_timestamp>.cast`
+    </ResponseField>
+    <ResponseField name="title" type="string">
+      Recording title shown by asciinema
+    </ResponseField>
+    <ResponseField name="quiet" type="boolean" default="false">
+      Quiet mode (suppresses asciinema prompts)
+    </ResponseField>
+    <ResponseField name="overwrite" type="boolean" default="false">
+      Overwrite existing recording files
+    </ResponseField>
+    <ResponseField name="stream" type="boolean" default="false">
+      Use live streaming instead of recording
+    </ResponseField>
+    <ResponseField name="stream_mode" type="string" default="remote">
+      Streaming mode: `"remote"` or `"local"`
+    </ResponseField>
+    <ResponseField name="local_addr" type="string">
+      For local mode: address like `"127.0.0.1:9000"`
+    </ResponseField>
+    <ResponseField name="remote" type="string">
+      For remote mode: STREAM-ID or WebSocket URL
+    </ResponseField>
+  </Expandable>
 </ResponseField>
+
+Example:
+```toml
+[asciinema]
+enabled = true
+external = true
+dir = "./recordings"
+file_prefix = "session"
+title = "dx Session"
+quiet = true
+overwrite = true
+
+# For live streaming
+stream = true
+stream_mode = "remote"
+remote = "your-stream-id"
+```
+
+## Complete Example
+
+```toml
+# ~/.dx/config.toml (global) or ./config.toml (project)
+
+allow_project_override = true
+markdown_enabled = true
+output_dim = true
+theme = "dark"
+show_fps = true
+motd_wrap = true
+motd_color = "#3B82F6"
+
+[status]
+command = "git branch --show-current 2>/dev/null || echo 'not a git repo'"
+
+[telemetry]
+enabled = false
+endpoint = "https://api.example.com/logs"
+
+[update]
+on_start = false
+build_cmd = "cargo build --release"
+preserve_args = true
+
+[asciinema]
+enabled = true
+external = true
+dir = "../recordings"
+file_prefix = "dx"
+quiet = true
+overwrite = true
+```
